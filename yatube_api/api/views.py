@@ -100,10 +100,6 @@ def api_post(request: HttpRequest, id):
 
 @api_view(['GET', 'POST'])
 def api_comments(request: HttpRequest, post_id):
-    post = get_object_or_404(
-        Post,
-        pk=post_id,
-    )
     comments = Comment.objects.filter(
         post_id__exact=post_id,
     )
@@ -135,10 +131,6 @@ def api_comments(request: HttpRequest, post_id):
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def api_comment(request: HttpRequest, post_id, id):
-    post = get_object_or_404(
-        Post,
-        pk=post_id,
-    )
     comment = get_object_or_404(
         Comment,
         pk=id,
