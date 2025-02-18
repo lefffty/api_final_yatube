@@ -37,19 +37,24 @@ def api_posts(request: HttpRequest):
             status=status.HTTP_200_OK,
         )
     elif request.method == 'POST':
-        serializer = PostSerializer(
-            data=request.data,
-        )
-        if serializer.is_valid():
-            serializer.validated_data['author'] = request.user
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED,
+        if request.user.is_authenticated:
+            serializer = PostSerializer(
+                data=request.data,
             )
+            if serializer.is_valid():
+                serializer.validated_data['author'] = request.user
+                serializer.save()
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         else:
             return Response(
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
 
@@ -183,17 +188,18 @@ def api_groups(request: HttpRequest):
 
 @api_view(['GET'])
 def api_group(request: HttpRequest, id):
-    group = get_object_or_404(
-        Group,
-        pk=id,
-    )
-    serializer = GroupSerializer(
-        group,
-    )
-    return Response(
-        serializer.data,
-        status=status.HTTP_200_OK,
-    )
+    if request.method == 'GET':
+        group = get_object_or_404(
+            Group,
+            pk=id,
+        )
+        serializer = GroupSerializer(
+            group,
+        )
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
 
 
 @api_view(['GET', 'POST'])
@@ -219,6 +225,10 @@ def api_fellow(request: HttpRequest):
             status=status.HTTP_200_OK,
         )
     elif request.method == 'POST':
+        if request.user.is_authenticated is False:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = FollowSerializer(
             data=request.data,
         )
