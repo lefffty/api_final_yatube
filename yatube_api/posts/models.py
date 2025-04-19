@@ -13,6 +13,10 @@ class Post(models.Model):
         User, on_delete=models.CASCADE, related_name='posts')
     image = models.ImageField(
         upload_to='posts/', null=True, blank=True)
+    group = models.ForeignKey(
+        'Group', on_delete=models.SET_NULL, related_name='posts',
+        null=True, blank=True,
+    )
 
     def __str__(self):
         return self.text
@@ -49,12 +53,6 @@ class Group(models.Model):
     )
     description = models.TextField(
 
-    )
-    post = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE,
-        related_name='group',
-        null=True,
     )
 
     def __str__(self):
