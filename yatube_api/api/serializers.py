@@ -70,7 +70,10 @@ class FollowSerializer(serializers.ModelSerializer):
         Нельзя подписаться на одного пользователя дважды
         """
         user = self.context['request'].user
-        if Follow.objects.filter(user=user, following=attrs['following']).exists():
+        if Follow.objects.filter(
+            user=user,
+            following=attrs['following']
+        ).exists():
             raise serializers.ValidationError(
                 'Вы уже подписаны на этого пользователя'
             )
