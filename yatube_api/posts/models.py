@@ -34,26 +34,45 @@ class Comment(models.Model):
         'Дата добавления', auto_now_add=True, db_index=True)
 
 
-class Follow(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='user',
-    )
-    following = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='followers',
-        blank=False,
-    )
-
-
 class Group(models.Model):
     title = models.CharField(
-        max_length=200,
+        verbose_name='Название группы',
+        max_length=30,
     )
-    slug = models.SlugField(
+    slug = models.SlugField(    
         unique=True,
+        verbose_name='Слаг группы',
     )
     description = models.TextField(
-
+        verbose_name='Описание группы',
     )
 
     def __str__(self):
         return self.title
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='user',
+    )
+    following = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='followers',
+    )
+
+    class Meta:
+        # ограничение на уникальность подписки
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'following'],
+                name='unique_follow',
+            ),
+        ]
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'{self.user} подписан на {self.following}'

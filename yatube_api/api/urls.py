@@ -1,5 +1,7 @@
-from django.urls import path
+from django.urls import path, include
+
 from . import views
+
 
 urlpatterns = [
     path(
@@ -29,5 +31,9 @@ urlpatterns = [
     path(
         'v1/follow/',
         views.api_fellow,
+    ),
+    path(
+        'v1/',
+        include('djoser.urls.jwt'),
     ),
 ]
