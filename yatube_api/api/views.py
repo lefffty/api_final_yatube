@@ -69,10 +69,6 @@ def api_post(request: HttpRequest, id):
         Post,
         pk=id,
     )
-    if request.user != post.author:
-        return Response(
-            status=status.HTTP_403_FORBIDDEN,
-        )
     if request.method == 'GET':
         serializer = PostSerializer(
             post,
@@ -82,6 +78,10 @@ def api_post(request: HttpRequest, id):
             status=status.HTTP_200_OK,
         )
     elif request.method == 'PUT' or request.method == 'PATCH':
+        if request.user != post.author:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = PostSerializer(
             post,
             data=request.data,
@@ -145,10 +145,6 @@ def api_comment(request: HttpRequest, post_id, id):
         return Response(
             status=status.HTTP_401_UNAUTHORIZED,
         )
-    if request.user != comment.author:
-        return Response(
-            status=status.HTTP_403_FORBIDDEN,
-        )
     if request.method == 'GET':
         serializer = CommentSerializer(
             comment,
@@ -158,6 +154,10 @@ def api_comment(request: HttpRequest, post_id, id):
             status=status.HTTP_200_OK,
         )
     elif request.method == 'PUT' or request.method == 'PATCH':
+        if request.user != comment.author:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = CommentSerializer(
             comment,
             data=request.data,
@@ -169,6 +169,10 @@ def api_comment(request: HttpRequest, post_id, id):
                 status=status.HTTP_200_OK,
             )
     elif request.method == 'DELETE':
+        if request.user != comment.author:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+            )
         comment.delete()
         return Response(
             status=status.HTTP_204_NO_CONTENT,
@@ -180,6 +184,7 @@ def api_groups(request: HttpRequest):
     groups = Group.objects.all()
     serializer = GroupSerializer(
         groups,
+        many=True,
     )
     return Response(
         serializer.data,
