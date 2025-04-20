@@ -39,7 +39,7 @@ class Group(models.Model):
         verbose_name='Название группы',
         max_length=30,
     )
-    slug = models.SlugField(    
+    slug = models.SlugField(
         unique=True,
         verbose_name='Слаг группы',
     )
